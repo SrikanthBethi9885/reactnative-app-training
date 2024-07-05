@@ -1,11 +1,19 @@
 import React from "react";
 import { View, TextInput, Text, TouchableOpacity, StyleSheet } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Login() {
+  const onpressbutton =()=>{
+    alert("Successful")
+  }
+    const navigation = useNavigation();
+    const handleSignupPress = () => {
+        navigation.navigate('Signup'); 
+      };
   return (
     <View style={styles.container}>
-      <Icon name="person-circle-outline" size={100} color="white" />
+      <Icon name="person-circle-outline" size={100} color="black" />
       <Text style={styles.title}>Log in to your Account</Text>
       <TextInput
         style={styles.input}
@@ -20,10 +28,10 @@ export default function Login() {
         placeholderTextColor="black"
         secureTextEntry={true}
       />
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity style={styles.button} onPress={onpressbutton}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={handleSignupPress}>
         <Text style={styles.createAccountText}>Create a New Account</Text>
       </TouchableOpacity>
     </View>
@@ -33,11 +41,10 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#98DDF4",
+    backgroundColor: "#A7FAFC",
     alignItems: "center",
     justifyContent: "center",
-    color:'red',
-    width:300,
+    
   },
   title: {
     fontSize: 20,
@@ -45,7 +52,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   input: {
-    width: "70%",
+    width: "80%",
     height: 50,
     borderWidth: 1,
     borderColor: "black",
