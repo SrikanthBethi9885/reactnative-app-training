@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function Login() {
   const onpressbutton =()=>{
-    alert("Successful")
+    alert("Login Successful")
   }
     const navigation = useNavigation();
     const handleSignupPress = () => {
