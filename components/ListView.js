@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } from "react-native";
+import { View, Text, FlatList, StyleSheet, SafeAreaView,Button, TextInput, TouchableOpacity } from "react-native";
 
 const ListView = () =>{
     const [userInput, SetuserInput] = useState("");
     const [sortBy, setSortBy] = useState("SNo");
     const [sortDirection, setSortDirection] = useState("asc");
-    const data=[
+    const [cityNames, setCityNames] = useState([
     {SNo:1, name:"Mumbai" },
     {SNo:2, name:"Delhi"},
     {SNo:3, name:"Hyderabad"},
@@ -16,8 +16,8 @@ const ListView = () =>{
     {SNo:8, name:"Lucknow"},
     {SNo:9, name:"Jaipur"},
     {SNo:10, name:"Visakhapatnam"}
-   ]
-   const filteredData = data.filter(item =>
+   ])
+   const filteredData = cityNames.filter(item =>
     item.name.toLowerCase().includes(userInput.toLowerCase())
 );
    
@@ -38,15 +38,34 @@ const sortedData = [...filteredData].sort((a, b) => {
     }
     return 0;
 });
+const [newCity, setNewCity] = useState("");
 
+   handleAddCity = () => {
+    if (newCity.trim() !== "") {
+      const newCityData = {
+        SNo: cityNames.length + 1,
+        name: newCity.trim()
+      };
+      setCityNames([...cityNames, newCityData]);
+      setNewCity(""); 
+    }
+  };
 
 return(
        <View style={styles.container}>
+       
          <SafeAreaView>
             <TextInput style={styles.textinput} placeholder="Search" clearButtononMode='always'
                 onChangeText={(text) =>SetuserInput(text)}
-            />
-        </SafeAreaView>
+            /></SafeAreaView>
+  <TextInput
+        style={styles.Input}
+        placeholder="Enter city name"
+        value={newCity}
+        onChangeText={text => setNewCity(text)}
+      />
+      <Button style={styles.button}title="Add City" onPress={handleAddCity} />
+      
         <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.button} onPress={() => handleSort("SNo")}>
                     <Text style={styles.buttonText}>Sort by SNo</Text>
@@ -54,7 +73,9 @@ return(
                 <TouchableOpacity style={styles.button} onPress={() => handleSort("name")}>
                     <Text style={styles.buttonText}>Sort by Name</Text>
                 </TouchableOpacity>
+                
             </View>
+          
          <FlatList 
          data={sortedData}
          ListHeaderComponent={header = ()=>(
@@ -63,17 +84,17 @@ return(
             <Text style={styles.headerText}> City Names</Text>
             </View>
          )} 
-         renderItem={({item,index}) =>(
+         renderItem={({item}) =>(
             <View style={ styles.row}>
     <Text  style={styles.SNo}>{ item.SNo}</Text>
     <Text style={styles.name}> {item.name}</Text>
     </View>
    )} 
      keyExtractor={item => item.SNo.toString()}
+      
          />
-         
-
-        </View>
+         </View>
+        
     )
 }
 
@@ -92,6 +113,13 @@ const styles = StyleSheet.create({
         borderRadius:5,
         width:'100%',
        
+    },
+    Input:{
+      width:'100%',
+      padding:10,
+      marginTop:10,
+      borderWidth:1,
+      borderRadius:5
     },
     buttonContainer: {
         flexDirection: 'row',
