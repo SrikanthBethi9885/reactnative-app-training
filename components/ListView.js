@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { View, Text, FlatList, StyleSheet } from "react-native";
-import { SafeAreaView, TextInput } from "react-native";
+import { View, Text, FlatList, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } from "react-native";
 
 const ListView = () =>{
     const [userInput, SetuserInput] = useState("");
+    const [sortBy, setSortBy] = useState("SNo");
+    const [sortDirection, setSortDirection] = useState("asc");
     const data=[
     {SNo:1, name:"Mumbai" },
     {SNo:2, name:"Delhi"},
@@ -20,6 +21,24 @@ const ListView = () =>{
     item.name.toLowerCase().includes(userInput.toLowerCase())
 );
    
+const handleSort = (field) => {
+    if (sortBy === field) {
+        setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+
+setSortBy(field);
+setSortDirection("asc");
+}
+};
+const sortedData = [...filteredData].sort((a, b) => {
+    if (sortBy === "SNo") {
+        return sortDirection === "asc" ? a.SNo - b.SNo : b.SNo - a.SNo;
+    } else if (sortBy === "name") {
+        return sortDirection === "asc" ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name);
+    }
+    return 0;
+});
+
 
 return(
        <View style={styles.container}>
@@ -28,8 +47,16 @@ return(
                 onChangeText={(text) =>SetuserInput(text)}
             />
         </SafeAreaView>
+        <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={() => handleSort("SNo")}>
+                    <Text style={styles.buttonText}>Sort by SNo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => handleSort("name")}>
+                    <Text style={styles.buttonText}>Sort by Name</Text>
+                </TouchableOpacity>
+            </View>
          <FlatList 
-         data={filteredData}
+         data={sortedData}
          ListHeaderComponent={header = ()=>(
             <View style={styles.header}>
             <Text style={styles.headerText} >SNo</Text>
@@ -42,12 +69,10 @@ return(
     <Text style={styles.name}> {item.name}</Text>
     </View>
    )} 
- 
- 
-         
-         keyExtractor={item => item.SNo.toString()}
+     keyExtractor={item => item.SNo.toString()}
          />
          
+
         </View>
     )
 }
@@ -67,6 +92,22 @@ const styles = StyleSheet.create({
         borderRadius:5,
         width:'100%',
        
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginTop:20
+    },
+    button: {
+        backgroundColor: '#3498db',
+        padding: 10,
+        borderRadius: 5
+    },
+    buttonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+        textAlign: 'center'
     },
     row:{
         flexDirection: 'row',
