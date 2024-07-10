@@ -50,6 +50,10 @@ const [newCity, setNewCity] = useState("");
       setNewCity(""); 
     }
   };
+  const handleDeleteCity = (SNo) => {
+    const updatedCities = cityNames.filter((city) => city.SNo !== SNo);
+    setCityNames(updatedCities);
+  };
 
 return(
        <View style={styles.container}>
@@ -88,6 +92,12 @@ return(
             <View style={ styles.row}>
     <Text  style={styles.SNo}>{ item.SNo}</Text>
     <Text style={styles.name}> {item.name}</Text>
+    <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeleteCity(item.SNo)}
+            >
+              <Text style={styles.buttonText}>X</Text>
+            </TouchableOpacity>
     </View>
    )} 
      keyExtractor={item => item.SNo.toString()}
@@ -165,6 +175,11 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 18
+    },
+    deleteButton:{
+        backgroundColor: "#A0A0A4",
+        padding: 8,
+        borderRadius: 5,
     }
 })
 export default ListView
