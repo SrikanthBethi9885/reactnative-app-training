@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, FlatList, StyleSheet, SafeAreaView,Button, TextInput, TouchableOpacity } from "react-native";
-
+import { Picker } from '@react-native-picker/picker';
 const ListView = () =>{
-    const [userInput, SetuserInput] = useState("");
+    const [userInput, setUserInput] = useState("");
     const [sortBy, setSortBy] = useState("SNo");
     const [sortDirection, setSortDirection] = useState("asc");
     const [cityNames, setCityNames] = useState([
@@ -39,73 +39,134 @@ const sortedData = [...filteredData].sort((a, b) => {
     return 0;
 });
 const [newCity, setNewCity] = useState("");
+const [editCity, setEditCity] = useState({ SNo: null, name: "" });
 
-   handleAddCity = () => {
-    if (newCity.trim() !== "") {
-      const newCityData = {
-        SNo: cityNames.length + 1,
-        name: newCity.trim()
-      };
-      setCityNames([...cityNames, newCityData]);
-      setNewCity(""); 
-    }
-  };
-  const handleDeleteCity = (SNo) => {
-    const updatedCities = cityNames.filter((city) => city.SNo !== SNo);
-    setCityNames(updatedCities);
-  };
+const handleAddCity = () => {
+  if (newCity.trim() !== "") {
+    const newCityData = {
+      SNo: cityNames.length + 1,
+      name: newCity.trim()
+    };
+    setCityNames([...cityNames, newCityData]);
+    setNewCity("");
+  }
+};
 
-return(
-       <View style={styles.container}>
-       
-         <SafeAreaView>
-            <TextInput style={styles.textinput} placeholder="Search" clearButtononMode='always'
-                onChangeText={(text) =>SetuserInput(text)}
-            /></SafeAreaView>
-  <TextInput
+const handleEditCity = (SNo) => {
+  const cityToEdit = cityNames.find(city => city.SNo === SNo);
+  if (cityToEdit) {
+    setEditCity({ SNo: cityToEdit.SNo, name: cityToEdit.name });
+  }
+};
+
+const handleSaveEdit = () => {
+  const updatedCities = cityNames.map(city =>
+    city.SNo === editCity.SNo ? { ...city, name: editCity.name } : city
+  );
+  setCityNames(updatedCities);
+  setEditCity({ SNo: null, name: "" });
+};
+
+const handleCancelEdit = () => {
+  setEditCity({ SNo: null, name: "" });
+};
+
+const handleDeleteCity = (SNo) => {
+  const updatedCities = cityNames.filter((city) => city.SNo !== SNo);
+  setCityNames(updatedCities);
+};
+
+  return (
+    <View style={styles.container}>
+      <SafeAreaView>
+        <TextInput
+          style={styles.textinput}
+          placeholder="Search"
+          onChangeText={(text) => setUserInput(text)}
+          value={userInput}
+        />
+      </SafeAreaView>
+      <TextInput
         style={styles.Input}
         placeholder="Enter city name"
-        value={newCity}
         onChangeText={text => setNewCity(text)}
+        value={newCity}
       />
-      <Button style={styles.button}title="Add City" onPress={handleAddCity} />
-      
-        <View style={styles.buttonContainer}>
-                <TouchableOpacity style={styles.button} onPress={() => handleSort("SNo")}>
-                    <Text style={styles.buttonText}>Sort by SNo</Text>
+      <Button
+        style={styles.button}
+        title="Add City"
+        onPress={handleAddCity}
+      />
+
+      <View style={styles.buttonContainer}>
+        <Picker
+          style={styles.picker}
+          selectedValue={sortBy}
+          onValueChange={(itemValue, itemIndex) => handleSort(itemValue)}
+        >
+        <Picker.Item label="Sort" value="Null" style={styles.pickerlabel} />
+          <Picker.Item label="Sort by SNo" value="SNo" style={styles.pickerlabel1}/>
+          <Picker.Item label="Sort by Name" value="name" style={styles.pickerlabel2}/>
+        </Picker>
+      </View>
+
+      <FlatList
+        data={sortedData}
+        ListHeaderComponent={() => (
+          <View style={styles.header}>
+            <Text style={styles.headerText}>SNo</Text>
+            <Text style={styles.headerText}>City Names</Text>
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <View style={styles.row}>
+            <Text style={styles.SNo}>{item.SNo}</Text>
+            {item.SNo === editCity.SNo ? (
+              <TextInput
+                style={styles.name}
+                value={editCity.name}
+                onChangeText={(text) => setEditCity({ ...editCity, name: text })}
+              />
+            ) : (
+              <Text style={styles.name}>{item.name}</Text>
+            )}
+            <View style={styles.editButtonContainer}>
+              {item.SNo === editCity.SNo ? (
+                <>
+                  <TouchableOpacity
+                    style={styles.saveButton}
+                    onPress={handleSaveEdit}
+                  >
+                    <Text>Save</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={handleCancelEdit}
+                  >
+                    <Text>Cancel</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <TouchableOpacity
+                  style={styles.editButton}
+                  onPress={() => handleEditCity(item.SNo)}
+                >
+                  <Text>Edit</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => handleSort("name")}>
-                    <Text style={styles.buttonText}>Sort by Name</Text>
-                </TouchableOpacity>
-                
+              )}
+              <TouchableOpacity
+                style={styles.deleteButton}
+                onPress={() => handleDeleteCity(item.SNo)}
+              >
+                <Text style={styles.buttonText}>X</Text>
+              </TouchableOpacity>
             </View>
-          
-         <FlatList 
-         data={sortedData}
-         ListHeaderComponent={header = ()=>(
-            <View style={styles.header}>
-            <Text style={styles.headerText} >SNo</Text>
-            <Text style={styles.headerText}> City Names</Text>
-            </View>
-         )} 
-         renderItem={({item}) =>(
-            <View style={ styles.row}>
-    <Text  style={styles.SNo}>{ item.SNo}</Text>
-    <Text style={styles.name}> {item.name}</Text>
-    <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteCity(item.SNo)}
-            >
-              <Text style={styles.buttonText}>X</Text>
-            </TouchableOpacity>
+          </View>
+        )}
+        keyExtractor={item => item.SNo.toString()}
+      />
     </View>
-   )} 
-     keyExtractor={item => item.SNo.toString()}
-      
-         />
-         </View>
-        
-    )
+  );
 }
 
 const styles = StyleSheet.create({
@@ -114,7 +175,8 @@ const styles = StyleSheet.create({
         justifyContent:'center',
         alignItems:'center',
         paddingVertical: 20,
-        paddingHorizontal: 10
+        paddingHorizontal: 10,
+        backgroundColor:'#96EEEF'
     },
     textinput:{
        padding:6,
@@ -122,6 +184,7 @@ const styles = StyleSheet.create({
         borderWidth:1,
         borderRadius:5,
         width:'100%',
+        backgroundColor:'#ffff'
        
     },
     Input:{
@@ -129,7 +192,8 @@ const styles = StyleSheet.create({
       padding:10,
       marginTop:10,
       borderWidth:1,
-      borderRadius:5
+      borderRadius:5,
+      backgroundColor:'#ffff'
     },
     buttonContainer: {
         flexDirection: 'row',
@@ -137,6 +201,16 @@ const styles = StyleSheet.create({
         width: '100%',
         marginTop:20
     },
+    picker: {
+        width: '40%',
+        height: 40,
+        borderWidth: 1,
+        borderRadius: 5,
+        marginLeft:10,
+        
+      },
+    
+     
     button: {
         backgroundColor: '#3498db',
         padding: 10,
@@ -155,7 +229,7 @@ const styles = StyleSheet.create({
         borderRadius:3,
         padding: 10,
         width: '100%',
-        backgroundColor:'#C8C7C3',
+        backgroundColor:'#ffff',
         marginBottom:10
     },
     header: {
@@ -167,19 +241,49 @@ const styles = StyleSheet.create({
     },
     headerText: {
         fontSize: 18,
-        fontWeight: "bold"
+        fontWeight: "bold",
+       
     },
     SNo:{
         fontSize: 18,
         fontWeight: "bold"
     },
     name: {
-        fontSize: 18
+        fontSize: 18,
+        marginLeft:10,
+       flex:1
+       
     },
-    deleteButton:{
-        backgroundColor: "#A0A0A4",
+    editButtonContainer:{
+     flexDirection:"row"
+    },
+    editbutton:{
+        backgroundColor: "#9AF46E",
+                padding: 8,
+                borderRadius: 5,
+                marginleft:10,
+               
+               },
+    saveButton: {
+        backgroundColor: "#4CAF50",
         padding: 8,
         borderRadius: 5,
+        marginLeft: 10
+      },
+      cancelButton: {
+        backgroundColor: "#F44336",
+        padding: 8,
+        borderRadius: 5,
+        marginLeft: 10
+      },
+   
+
+    deleteButton:{
+        backgroundColor: "#F4324C",
+        padding: 8,
+        borderRadius: 5,
+        marginLeft:10
     }
 })
+
 export default ListView
