@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, SafeAreaView, TouchableOpacity,  FlatList, Text, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
+import MessageScreen from './MessageScreen';
 
 
   const ChatScreen = () => {
@@ -13,23 +14,30 @@ import { useNavigation } from '@react-navigation/native';
     const navigateToChatScreen = () => {
       navigation.navigate('ChatScreen');
     };
+    const navigateToMessageScreen =()=>{
+      navigation.navigate(MessageScreen);
+    }
 
     const contacts=[
       {id:'1',
           name: 'Albert Moedanao',
-          profilephoto: require("../assets/Img6.png")
+          profilephoto: require("../assets/Img6.png"),
+          lastseen:"Last Seen Today 10:30 Am" 
       },
       {id:'2',
           name:'Celso Thron',
-          profilephoto:require("../assets/Img4.png")
+          profilephoto:require("../assets/Img4.png"),
+          lastseen:"Last Seen Today 05:30 pm" 
       },
       {id:'3',
           name:'Ruben Kishimoto',
-          profilephoto:require("../assets/Img5.png")
+          profilephoto:require("../assets/Img5.png"),
+          lastseen:"Last Seen Today 2:05 Am" 
       },
       {id:'4',
           name:'John Doe',
-          profilephoto:require("../assets/Img3.png")
+          profilephoto:require("../assets/Img3.png"),
+          lastseen:"Last Seen Today 4:00 pm" 
       }
           ]
           const renderContactItem=({item})=>{
@@ -37,7 +45,10 @@ import { useNavigation } from '@react-navigation/native';
                 <View style={styles.contactItem}>
             <Image source={item.profilephoto} style={styles.profilePhoto} />
             <View style={styles.contactInfo}>
+            <TouchableOpacity onPress={navigateToMessageScreen}>
               <Text style={styles.contactName}>{item.name}</Text>
+              </TouchableOpacity>
+              <Text style={styles.lastseen}>{item.lastseen}</Text>
             </View>
           </View>
         );
@@ -150,6 +161,9 @@ const styles=StyleSheet.create({
     height:45,
     width:45,
     marginLeft:60
+  },
+  lastseen:{
+    marginTop:10
   }
   
 });
