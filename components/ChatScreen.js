@@ -14,8 +14,8 @@ import MessageScreen from './MessageScreen';
     const navigateToChatScreen = () => {
       navigation.navigate('ChatScreen');
     };
-    const navigateToMessageScreen =()=>{
-      navigation.navigate(MessageScreen);
+    const navigateToMessageScreen =(item)=>{
+      navigation.navigate('MessageScreen',{ contactName: item.name, profilePhoto: item.profilephoto });
     }
 
     const contacts=[
@@ -45,7 +45,7 @@ import MessageScreen from './MessageScreen';
                 <View style={styles.contactItem}>
             <Image source={item.profilephoto} style={styles.profilePhoto} />
             <View style={styles.contactInfo}>
-            <TouchableOpacity onPress={navigateToMessageScreen}>
+            <TouchableOpacity onPress={() => navigateToMessageScreen(item)}>
               <Text style={styles.contactName}>{item.name}</Text>
               </TouchableOpacity>
               <Text style={styles.lastseen}>{item.lastseen}</Text>

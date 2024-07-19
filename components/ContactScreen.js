@@ -15,8 +15,8 @@ const ContactScreen = () => {
   const navigateToContactScreen = () => {
     navigation.navigate('ContactScreen');
   };
-  const navigateToMessageScreen =()=>{
-    navigation.navigate(MessageScreen);
+  const navigateToMessageScreen =(item)=>{
+    navigation.navigate('MessageScreen',{ contactName: item.name, profilePhoto: item.profilephoto })
   }
   const [newContactsName, setNewContactsName] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -66,7 +66,7 @@ const ContactScreen = () => {
         <View style={styles.contactInfo}>
           <Text style={styles.contactName}>{item.name}</Text>
           <View style={styles.message}>
-          <TouchableOpacity onPress={navigateToMessageScreen}>
+          <TouchableOpacity onPress={() => navigateToMessageScreen(item)}>
           <Text style={styles.messagetext}>Message</Text>
           </TouchableOpacity>
           </View>
